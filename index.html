@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -229,6 +230,18 @@ nav.scrolled{box-shadow:var(--shadow);}
 .ach-grid.on .ach-card:nth-child(4){opacity:1;transform:none;transition-delay:.28s;}
 .ach-grid.on .ach-card:nth-child(5){opacity:1;transform:none;transition-delay:.36s;}
 
+/* DSA ACHIEVEMENT */
+.dsa-card{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:2rem;display:flex;align-items:center;gap:1.5rem;box-shadow:var(--shadow);transition:all .3s cubic-bezier(.22,.68,0,1.2);}
+.dsa-card:hover{border-color:var(--cyan);box-shadow:var(--shadow-lg);transform:translateY(-5px);}
+.dsa-ico{width:72px;height:72px;border-radius:18px;background:var(--cyan-light);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;transition:transform .3s;}
+.dsa-card:hover .dsa-ico{transform:rotate(-8deg) scale(1.08);}
+.dsa-count{font-size:2rem;font-weight:900;color:var(--cyan);letter-spacing:-.04em;line-height:1;}
+.dsa-body h3{font-size:1.15rem;font-weight:800;color:var(--txt);margin:.35rem 0 .45rem;}
+.dsa-body p{font-size:.84rem;color:var(--muted);line-height:1.7;}
+.dsa-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.85rem;}
+.dsa-tag{font-size:.7rem;font-weight:600;background:var(--soft2);color:var(--sub);padding:.25rem .65rem;border-radius:6px;}
+.dsa-link{display:block;width:100%;text-decoration:none;color:inherit;}
+
 /* CONTACT */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;}
 .contact-form-wrap{background:var(--white);border-radius:20px;padding:2.2rem;box-shadow:var(--shadow-md);border:1px solid var(--border);}
@@ -276,7 +289,11 @@ footer em{color:var(--cyan);font-style:normal;}
   .proj-grid{grid-template-columns:1fr;}
   .skills-grid{grid-template-columns:repeat(2,1fr);}
   .ach-grid{grid-template-columns:1fr;}
+  .dsa-card{align-items:flex-start;}
   .contact-grid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .dsa-card{flex-direction:column;padding:1.5rem;}
 }
 </style>
 </head>
@@ -474,15 +491,42 @@ footer em{color:var(--cyan);font-style:normal;}
   </div>
 </section>
 
-<!-- ACHIEVEMENTS -->
+<!-- DSA ACHIEVEMENT -->
+<section id="dsa-achievement" class="sec sec-soft">
+  <div class="sec-in">
+    <div class="sec-label rv">
+      <div class="sec-chip">Achievement</div>
+      <h2>Problem-Solving Milestone</h2>
+      <p>A achievement dedicated to my data structures and algorithms journey</p>
+    </div>
+    <a href="https://github.com/DhruvVanra/LEETCODE" target="_blank" rel="noopener noreferrer" class="dsa-link rv">
+      <div class="dsa-card">
+        <div class="dsa-ico">🧠</div>
+        <div class="dsa-body">
+          <div class="dsa-count">50+</div>
+          <h3>DSA Questions Solved</h3>
+          <p>Solved more than 50 Data Structures and Algorithms problems, strengthening my logical thinking, coding efficiency, and approach to technical problem-solving.</p>
+          <div class="dsa-tags">
+            <span class="dsa-tag">Data Structures</span>
+            <span class="dsa-tag">Algorithms</span>
+            <span class="dsa-tag">Problem Solving</span>
+            <span class="dsa-tag">Java</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- CERTIFICATES -->
 <section id="achievements" class="sec">
   <div class="sec-in">
     <div class="sec-label rv">
-      <div class="sec-chip">Achievements</div>
-      <h2>Certifications &amp; Milestones</h2>
-      <p>Learning journey and credentials earned along the way</p>
+      <div class="sec-chip">Certificates</div>
+      <h2>Certifications &amp; Hackathons</h2>
+      <p>All certificates and participation credentials earned along the way</p>
     </div>
-    <div class="ach-grid rv">
+  <div class="ach-grid rv">
 
   <a href="https://www.coursera.org/account/accomplishments/verify/KV4QN6WE1GG9" target="_blank" style="text-decoration:none;color:inherit;">
     <div class="ach-card">
@@ -538,6 +582,17 @@ footer em{color:var(--cyan);font-style:normal;}
       </div>
     </div>
   </a>
+
+  <a href="https://www.coursera.org/account/accomplishments/verify/SO6U223CQ129" target="_blank" style="text-decoration:none;color:inherit;">
+  <div class="ach-card">
+    <div class="ach-ico">📊</div>
+    <div class="ach-body">
+      <h4>Exploratory Data Analysis for Machine Learning</h4>
+      <p>Learned data analysis, visualization, and preprocessing for machine learning.</p>
+      <span class="ach-year">Certification</span>
+    </div>
+  </div>
+</a>
 
 </div>
   </div>
