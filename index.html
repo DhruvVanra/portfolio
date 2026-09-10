@@ -1107,6 +1107,100 @@
       background: var(--cyan2);
     }
 
+    /* ── VIDEO MODAL STYLES ── */
+    .video-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      padding: 20px;
+    }
+
+    .video-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .video-modal-content {
+      position: relative;
+      width: 100%;
+      max-width: 960px;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .video-modal-overlay.active .video-modal-content {
+      transform: scale(1);
+    }
+
+    .video-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .video-modal-title {
+      color: #f1f5f9;
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .video-modal-close {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 7px 16px;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .video-modal-close:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+      transform: scale(1.05);
+    }
+
+    .video-modal-wrapper {
+      width: 100%;
+      background: #000;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-modal-wrapper video {
+      width: 100%;
+      height: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+    }
+
     /* ── PROJECT cards staggered pop-in ── */
     .proj-grid .pcard {
       opacity: 0;
@@ -2433,6 +2527,21 @@
     </div>
   </footer>
 
+  <!-- VIDEO MODAL PREVIEW OVERLAY -->
+  <div id="videoModal" class="video-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalVideoTitle">
+    <div class="video-modal-content">
+      <div class="video-modal-header">
+        <h4 id="modalVideoTitle" class="video-modal-title">Project Demo Video</h4>
+        <button id="closeVideoModal" class="video-modal-close" aria-label="Close preview and go back">
+          <span>← Back</span> <i>✕</i>
+        </button>
+      </div>
+      <div class="video-modal-wrapper">
+        <video id="modalVideoPlayer" controls playsinline></video>
+      </div>
+    </div>
+  </div>
+
   <script>
     // PROGRESS BAR
     window.addEventListener('scroll', () => {
@@ -2480,35 +2589,97 @@
     }
     function toggleMenu() { }
 
-    // PROJECT VIDEO HOVER PLAY/RESUME, LEAVE PAUSE, & CLICK FULLSCREEN
+    // VIDEO MODAL OVERLAY LOGIC (BACK BUTTON & ESC KEY SUPPORT)
+    const videoModal = document.getElementById('videoModal');
+    const modalVideoPlayer = document.getElementById('modalVideoPlayer');
+    const modalVideoTitle = document.getElementById('modalVideoTitle');
+    const closeVideoModalBtn = document.getElementById('closeVideoModal');
+
+    function openVideoModal(videoSrc, titleText) {
+      if (!videoModal || !modalVideoPlayer) return;
+      modalVideoPlayer.src = videoSrc;
+      if (modalVideoTitle && titleText) {
+        modalVideoTitle.textContent = titleText;
+      }
+      videoModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      modalVideoPlayer.play().catch(err => console.log('Modal video play prevented:', err));
+    }
+
+    function closeVideoModal() {
+      if (!videoModal || !modalVideoPlayer) return;
+      videoModal.classList.remove('active');
+      modalVideoPlayer.pause();
+      modalVideoPlayer.src = '';
+      document.body.style.overflow = '';
+    }
+
+    if (closeVideoModalBtn) {
+      closeVideoModalBtn.addEventListener('click', closeVideoModal);
+    }
+
+    if (videoModal) {
+      videoModal.addEventListener('click', (e) => {
+        if (e.target === videoModal) {
+          closeVideoModal();
+        }
+      });
+    }
+
+    // Pressing ESC key closes video modal and goes back to portfolio
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        if (videoModal && videoModal.classList.contains('active')) {
+          closeVideoModal();
+        }
+      }
+    });
+
+    // Intercept "Watch Video" button clicks to open Video Modal
+    document.querySelectorAll('.pbtn-demo').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const card = btn.closest('.pcard');
+        const videoSrc = btn.getAttribute('href');
+        const titleText = card ? card.querySelector('h3')?.textContent : 'Project Demo Video';
+        
+        if (card) {
+          const previewVid = card.querySelector('.proj-video');
+          if (previewVid) previewVid.pause();
+        }
+        
+        openVideoModal(videoSrc, titleText);
+      });
+    });
+
+    // PROJECT VIDEO HOVER PLAY/RESUME, LEAVE PAUSE, & CLICK MODAL
     document.querySelectorAll('.pcard-thumb').forEach(thumb => {
       const video = thumb.querySelector('.proj-video');
       if (!video) return;
 
-      // Hover enter: resume video playback from current time
+      // Hover enter: resume video preview
       thumb.addEventListener('mouseenter', () => {
         const playPromise = video.play();
         if (playPromise !== undefined) {
-          playPromise.catch(err => {
-            console.log('Video autoplay prevented:', err);
-          });
+          playPromise.catch(() => {});
         }
       });
 
-      // Hover leave: pause video (do not reset currentTime)
+      // Hover leave: pause video preview
       thumb.addEventListener('mouseleave', () => {
         video.pause();
       });
 
-      // Click: enter full screen mode
+      // Click thumbnail / fullscreen button: open Video Modal
       thumb.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (video.requestFullscreen) {
-          video.requestFullscreen();
-        } else if (video.webkitRequestFullscreen) {
-          video.webkitRequestFullscreen();
-        } else if (video.msRequestFullscreen) {
-          video.msRequestFullscreen();
+        video.pause();
+        const source = video.querySelector('source');
+        const videoSrc = source ? source.getAttribute('src') : '';
+        const card = thumb.closest('.pcard');
+        const titleText = card ? card.querySelector('h3')?.textContent : 'Project Demo Video';
+        if (videoSrc) {
+          openVideoModal(videoSrc, titleText);
         }
       });
     });
